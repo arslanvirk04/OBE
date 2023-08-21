@@ -21,10 +21,10 @@ const Curriculum = () => {
     }))
     setCurriculumData(data)
   }
-
   const navigateToAddCurriculum = () => {
     navigate('/curriculum/add')
   }
+ 
   return (
     <CCard>
       <div className="d-flex justify-content-between align-items-center p-3 pb-0">
@@ -36,6 +36,7 @@ const Curriculum = () => {
       <CCardBody className="d-flex justify-content-between">
         <CurriculumList curriculumData={curriculumData} GetCurriculumData={GetCurriculumData} />
       </CCardBody>
+     
     </CCard>
   )
 }

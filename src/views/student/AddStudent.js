@@ -64,7 +64,7 @@ const AddStudent = () => {
       const studentData = await getOneStudent(studentId)
       console.log('studentData', studentData)
       setFormData({
-        id: studentData.id,
+        id: studentData.id || '',
         name: studentData.User?.name || '',
         email: studentData.User?.email || '',
         registrationNo: studentData.registrationNo || '',
@@ -85,14 +85,20 @@ const AddStudent = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
 
-    const currentDate = new Date(); // Get the current date and time
+    const currentDate = new Date() // Get the current date and time
     const updatedFormData = {
       ...formData,
       createdAt: currentDate, // Add the createdAt property with the current date and time
-    };
-    const response = await addStudent (updatedFormData)
-    console.log('response: ', response)
-    navigate('/student')
+    }
+    console.log('updatedFormData', updatedFormData)
+    const data = _.pickBy(updatedFormData, _.identity)
+
+    console.log('data', data)
+    try {
+      const response = await addStudent(data)
+      console.log('response: ', response)
+      navigate('/student')
+    } catch (error) {}
   }
   const handleChange = (event) => {
     const { id, value } = event.target
@@ -109,27 +115,33 @@ const AddStudent = () => {
       <CForm onSubmit={handleSubmit}>
         <CRow className="row g-5">
           <CCol>
-            <CFormLabel htmlFor="name"><h6>Name</h6></CFormLabel>
+            <CFormLabel htmlFor="name">
+              <h6>Name</h6>
+            </CFormLabel>
             <CFormInput
-             type="Name"
-              id="name" 
+              type="Name"
+              id="name"
               value={formData.name}
-               onChange={handleChange}
-               required
-               />
+              onChange={handleChange}
+              required
+            />
           </CCol>
           <CCol>
-            <CFormLabel htmlFor="email4"><h6>Email</h6></CFormLabel>
+            <CFormLabel htmlFor="email4">
+              <h6>Email</h6>
+            </CFormLabel>
             <CFormInput
-             type="email"
+              type="email"
               id="email"
-               value={formData.email} 
-               onChange={handleChange}
-               required
-                />
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
           </CCol>
           <CCol>
-            <CFormLabel htmlFor="inputRoll-no"><h6>Registration No</h6></CFormLabel>
+            <CFormLabel htmlFor="inputRoll-no">
+              <h6>Registration No</h6>
+            </CFormLabel>
             <CFormInput
               type="text"
               id="registrationNo"
@@ -141,27 +153,33 @@ const AddStudent = () => {
         </CRow>
         <CRow className="row g-5">
           <CCol>
-            <CFormLabel htmlFor="inputProgram"><h6>Program</h6></CFormLabel>
+            <CFormLabel htmlFor="inputProgram">
+              <h6>Program</h6>
+            </CFormLabel>
             <CFormInput
-             type="text" 
-             id="program" 
-             value={formData.program}
-             onChange={handleChange}
-             required
-              />
+              type="text"
+              id="program"
+              value={formData.program}
+              onChange={handleChange}
+              required
+            />
           </CCol>
           <CCol>
-            <CFormLabel htmlFor="inputProgram"><h6>Session</h6></CFormLabel>
-            <CFormInput 
-            type="text" 
-            id="session" 
-            value={formData.session}
-             onChange={handleChange} 
-             required
-             />
+            <CFormLabel htmlFor="inputProgram">
+              <h6>Session</h6>
+            </CFormLabel>
+            <CFormInput
+              type="text"
+              id="session"
+              value={formData.session}
+              onChange={handleChange}
+              required
+            />
           </CCol>
           <CCol>
-            <CFormLabel htmlFor="departmentName"><h6>Department</h6></CFormLabel>
+            <CFormLabel htmlFor="departmentName">
+              <h6>Department</h6>
+            </CFormLabel>
             <CFormSelect
               type="text"
               id="departmentId"
@@ -175,7 +193,9 @@ const AddStudent = () => {
         </CRow>
         <CRow className="row g-5">
           <CCol>
-            <CFormLabel htmlFor="contactNo"><h6>Contact No</h6></CFormLabel>
+            <CFormLabel htmlFor="contactNo">
+              <h6>Contact No</h6>
+            </CFormLabel>
             <CFormInput
               id="contactNo"
               placeholder="+92"
@@ -184,11 +204,15 @@ const AddStudent = () => {
             />
           </CCol>
           <CCol>
-            <CFormLabel htmlFor="city"><h6>City</h6></CFormLabel>
+            <CFormLabel htmlFor="city">
+              <h6>City</h6>
+            </CFormLabel>
             <CFormInput type="text" value={formData.city} id="city" onChange={handleChange} />
           </CCol>
           <CCol>
-            <CFormLabel htmlFor="address"><h6>Address</h6></CFormLabel>
+            <CFormLabel htmlFor="address">
+              <h6>Address</h6>
+            </CFormLabel>
             <CFormInput
               id="address"
               placeholder="1234 Main St"
@@ -200,7 +224,9 @@ const AddStudent = () => {
         {!isEdit && (
           <CRow className="row g-5">
             <CCol>
-              <CFormLabel htmlFor="password"><h6>Password</h6></CFormLabel>
+              <CFormLabel htmlFor="password">
+                <h6>Password</h6>
+              </CFormLabel>
               <CFormInput
                 name="password"
                 type="password"
@@ -212,7 +238,9 @@ const AddStudent = () => {
               />
             </CCol>
             <CCol>
-              <CFormLabel htmlFor="confirmPassword"><h6>Confirm Password</h6></CFormLabel>
+              <CFormLabel htmlFor="confirmPassword">
+                <h6>Confirm Password</h6>
+              </CFormLabel>
               <CFormInput
                 name="confirmPassword"
                 type="password"

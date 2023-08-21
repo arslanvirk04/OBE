@@ -1,31 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import { CButton, CCard, CForm, CCol, CFormLabel, CRow, CFormSelect } from '@coreui/react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { DocsExample } from 'src/components'
-import { addCurriculum } from 'src/services/curriculum'
+import { addCurriculum, getOneCurriculum } from 'src/services/curriculum'
 import { getAllPrograms } from 'src/services/programs'
 import { getAllCourses } from 'src/services/courses'
-// import MultiSelectDropdown from '../MultiSelectDropdown'
-import Select from 'react-select';
+import Select from 'react-select'
 import _ from 'lodash'
+
 
 const AddCurriculum = () => {
   const navigate = useNavigate()
+  const params = useParams()
   const [programs, setPrograms] = useState()
   const [courses, setCourses] = useState([])
   const [selectedProgram, setSelectedProgram] = useState(null)
   const [semesters, setSemesters] = useState([])
   const [errors, setErrors] = useState({})
-
+ 
   const [curriculum, setCurriculum] = useState({
     year: null,
     programId: null,
     semesters: [],
   })
+
   useEffect(() => {
     getProgramData()
     getCourseData()
-  }, [])
+    console.log('params', params)
+    if (params.curriculumId) {
+      getCurriculumDetails(params.curriculumId)
+    }
+  }, [params.curriculumId])
+
   const getCourseData = async () => {
     const getCourseData = await getAllCourses()
     const course = []
@@ -53,8 +60,24 @@ const AddCurriculum = () => {
       }),
     )
     setPrograms(pgr)
-    console.log('semesters 1', semesters)
   }
+  const getCurriculumDetails = async (curriculumId) => {
+    try {
+      const curriculumData = await getOneCurriculum(curriculumId)
+      setCurriculum({
+        year: curriculumData.year || '',
+        programId: curriculumData.programId || '',
+        semesters: curriculumData.CurriculumSemester || [],
+      })
+      setSemesters(
+        Array.from({ length: curriculumData.CurriculumSemester.length }, (_, index) => index + 1),
+      )
+
+      ///change
+      // setCourses(CurriculumSemester)
+    } catch (err) {}
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     const validationErrors = {}
@@ -69,29 +92,34 @@ const AddCurriculum = () => {
       return
     }
     const response = await addCurriculum(curriculum)
-    console.log('response', response)
+    console.log('response: ', response)
     navigate('/curriculum')
   }
+
   const handleCourseChange = (options, index) => {
-    const semestersCopy = _.cloneDeep(curriculum.semesters);
+    const semestersCopy = _.cloneDeep(curriculum.semesters)
+    console.log('options ', options)
+    console.log('index ', index)
+    console.log('semestersCopy', semestersCopy)
     // Save the selected courses for the current semester
     semestersCopy[index] = {
       semester: index + 1,
-      courses: options.map(option => option.value),
-    };
+      courses: options.map((option) => option.value),
+    }
+    console.log("semestersCopy[index]", semestersCopy[index]);
+
     // Remove the selected courses from all subsequent semesters
     for (let i = index + 1; i < semestersCopy.length; i++) {
-      semestersCopy[i].courses = semestersCopy[i].courses.filter(courseId =>
-        !options.some(option => option.value === courseId)
-      );
+      semestersCopy[i].courses = semestersCopy[i].courses.filter(
+        (courseId) => !options.some((option) => option.value === courseId),
+      )
+      console.log('semestersCopy[i].courses', semestersCopy[i].courses)
     }
-    setCurriculum(prevFormData => ({
+    setCurriculum((prevFormData) => ({
       ...prevFormData,
       semesters: semestersCopy,
-    }));
-    console.log('options', options)
-    console.log('index', index)
-  };
+    }))
+  }
   const handleChange = (event) => {
     const { id, value } = event.target
     setCurriculum((prevFormData) => ({
@@ -100,8 +128,6 @@ const AddCurriculum = () => {
     }))
   }
 
-  console.log('curriculum', curriculum)
-  console.log('semesters', semesters)
   const handleProgramChange = (event) => {
     const selectedProgramId = event.target.value
     setSelectedProgram(selectedProgramId)
@@ -126,16 +152,23 @@ const AddCurriculum = () => {
       </option>,
     )
   }
-  const getCoursesOptions = semesterIndex => {
-    const selectedCoursesEarlierSemesters = [];
-    for (let i = 0; i < semesterIndex; i++) {
-      selectedCoursesEarlierSemesters.push(...curriculum.semesters[i]?.courses || []);
-    }
-    console.log("selectedCoursesEarlierSemesters", selectedCoursesEarlierSemesters);
-    return courses.filter(course => !selectedCoursesEarlierSemesters.includes(course.value));
-   
-  };
+  const getCoursesOptions = () => {
+    const selectedCourses = []
+    console.log('curriculum.semesters', curriculum.semesters)
+    for (const semester of curriculum.semesters) {
+      console.log('semester?.courses', semester?.courses)
 
+      if (semester?.courses) {
+        selectedCourses.push(...semester?.courses)
+      }
+    }
+    console.log('selectedCourses', selectedCourses)
+    return courses.filter((course) => !selectedCourses.includes(course.value))
+  }
+  console.log('curriculum', curriculum)
+
+
+  
   return (
     <div className="form-container">
       <CCard>
@@ -149,7 +182,7 @@ const AddCurriculum = () => {
                 <CFormLabel htmlFor="year">
                   <h6>Year</h6>
                 </CFormLabel>
-                <CFormSelect id="year" onChange={handleChange} >
+                <CFormSelect id="year" onChange={handleChange} value={curriculum.year}>
                   <option value="">Select a year</option>
                   {yearOptions}
                 </CFormSelect>
@@ -163,6 +196,7 @@ const AddCurriculum = () => {
                   id="programId"
                   onChange={handleProgramChange}
                   options={programs}
+                  value={curriculum.programId}
                   required
                 />
                 {errors.programId && <div className="error-message">{errors.programId}</div>}
@@ -174,17 +208,30 @@ const AddCurriculum = () => {
                 <CCol key={index}>
                   <h6>Semester {semester}</h6>
                   <Select
-                 options={getCoursesOptions(index)}
+                    options={getCoursesOptions(index)}
                     label={'Course'}
                     isMulti
                     required
+                    defaultValue={_.map(
+                      curriculum?.semesters[index]?.CurriculumSemesterCourse,
+                      (row) => ({
+                        label: row?.Course?.courseTitle,
+                        value: row?.Course?.id,
+                      }),
+                    )}
+
+                    //  value={semester.courses.map(courseId => courses.find(course => course.value === courseId))}
                     onChange={(value) => handleCourseChange(value, index)}
-                    // value={selectedOptions}
                   />
                 </CCol>
               ))}
             </CRow>
+         
+  
             
+       
+  
+      
             <CRow className="row g-3 my-3 justify-content-end px-5">
               <CCol xs="auto">
                 <CButton onClick={navigateToCurriculum}>Cancel</CButton>

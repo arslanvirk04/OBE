@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import _ from "lodash";
 import { cilTrash, cilPencil } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { deleteStudent } from 'src/services/student';
 import Table from 'src/components/Table';
 import { useNavigate } from 'react-router-dom';
 import { deleteDepartment } from 'src/services/departments';

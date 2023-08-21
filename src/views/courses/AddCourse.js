@@ -88,7 +88,7 @@ const AddCourse = () => {
   const getCourseDetails = async (courseId) => {
     try {
       const courseData = await getOne(courseId)
-      console.log('data', courseData)
+      console.log('courseData', courseData)
       setFormData({
         id: courseData.id,
         courseCode: courseData.courseCode || '',
@@ -96,8 +96,9 @@ const AddCourse = () => {
         creditHours: courseData.creditHours || '',
         courseType: courseData.courseType || '',
         programId: courseData.programId || '',
+        programName: courseData.Program?.name || '',
         departmentName: courseData.Department?.name || '',
-        departmentId: courseData.Department?.id || '',
+        departmentId: courseData.departmentId || '',
         referenceBooks: courseData.referenceBooks || '',
         clo: courseData.clo || '',
         preReq: courseData.preReq || '',

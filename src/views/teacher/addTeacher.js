@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { DocsExample } from 'src/components'
 import { getAllDepartments } from 'src/services/departments'
 import { addTeacher, getOne } from 'src/services/faculty'
+import dayjs from 'dayjs'
 
 const AddTeacher = () => {
   const params = useParams()
@@ -12,6 +13,7 @@ const AddTeacher = () => {
   const [departments, setDepartments] = useState([])
   const [isEdit, setIsEdit] = useState(false)
   const [formData, setFormData] = useState({
+    id : null,
     name: null,
     email: null,
     departmentName: null,
@@ -61,6 +63,7 @@ const AddTeacher = () => {
       const result = await getOne(teacherId)
       console.log('result: ', result)
       setFormData({
+        id: result.id || '',
         name: result.User?.name || '',
         email: result.User?.email || '',
         departmentName: result.Department?.name || '',
@@ -72,9 +75,9 @@ const AddTeacher = () => {
         city: result.User?.city || '',
         address: result.User?.address || ' ',
         contactNo: result.User?.contactNo || '',
-        joiningDate: result.joiningDate || '',
+        joiningDate:dayjs(result.joiningDate).format("YYYY-MM-DD")  || '',
         departmentId: result.Department?.id || '',
-        userId: result.User?.userId || '',
+        userId: result.User?.id || '',
         password: result.password || '',
         confirmPassword: result.confirmPassword || '',
         createdAt: new Date(result.createdAt) || new Date(),
@@ -99,6 +102,7 @@ const AddTeacher = () => {
   const navigateToTeacher = () => {
     navigate(-1)
   }
+  console.log("formData" ,formData);
   return (
     <DocsExample href="forms/layout#gutters">
       <CForm onSubmit={handleSubmit}>

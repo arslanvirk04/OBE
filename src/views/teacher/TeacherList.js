@@ -2,24 +2,9 @@ import { useMemo } from 'react';
 import _ from "lodash";
 import { cilTrash, cilPencil } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { deleteStudent, getOneStudent, updateStudentData } from 'src/services/student';
 import Table from 'src/components/Table';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import { deleteTeacher } from 'src/services/faculty';
-
-
-// const [toast, setToast] = useState(0)
-// const toaster = useRef()
-
-// const errorToast = (msg) => (
-
-//   <CToast>
-//     <CToastBody>{msg} </CToastBody>
-//   </CToast>
-// )
-
-
 
 const TeacherList = ({ teacherData = [], GetTeacherData }) => {
   const navigate = useNavigate();

@@ -20,7 +20,7 @@ const SessionList = ({ sessionData = [], GetSessionData }) => {
     // addToast(errorToast(response?.message))
   }
   const updateSession = async (id) => {
-    navigate(`/Programs/${id}/edit`)
+    navigate(`/sessions/${id}/edit`)
   }
   const tableColumns = [
     {

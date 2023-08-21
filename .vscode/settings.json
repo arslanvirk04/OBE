@@ -5,6 +5,7 @@
         "middlewares",
         "persistor",
         "reduxjs",
+        "setline",
         "signout",
         "simplebar",
         "socialmedia",

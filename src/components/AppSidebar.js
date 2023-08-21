@@ -30,7 +30,7 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
-  <h5> <img src="/images/qau_logo.jpg" alt="" style={{ width: '40px' , height:'30'}} />QAU OBE</h5>
+  <h5>QAU OBE</h5>
          <CIcon className="sidebar-brand-full" height={35} />
         <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
       </CSidebarBrand>

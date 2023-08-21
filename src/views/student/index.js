@@ -27,7 +27,6 @@ const Student = () => {
     }))
     setStudentData(data);
   }
-   // Function to navigate to the AddStudent form
    const navigateToStudent=()=>{
    navigate('/student/add');
  
